@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <ctype.h>
 
 // contains INT_MAX
 #include <limits.h>
@@ -16,7 +17,7 @@
  */
 long factorial(int n) {
   long result = 1;
-  for (int i = n; i >= 0; i--) {
+  for (int i = n; i > 0; i--) {
     result = result * i;
   }
   return result;
@@ -31,29 +32,23 @@ int main(int argc, char **argv) {
     exit(1);
   }
 
-  char *end;
-
   // clear errno so we can check whether strtol fails
   errno = 0;
-  long n = strtol(argv[0], &end, 10);
+  int n = atoi(argv[0]);
   int res_errno = errno;
 
-  if (end == argv[0]) {
-    fprintf(stderr, "Error: couldn't interpret '%s' as a number\n", argv[0]);
-    exit(1);
-  } else if (res_errno == ERANGE) {
+  if (res_errno == ERANGE) {
     fprintf(stderr, "Error: '%s' is outside the range of numbers we can handle\n", argv[0]);
     exit(1);
   } else if (n > INT_MAX) {
     fprintf(stderr, "Error: '%s' is too big to fit in an int\n", argv[0]);
     exit(1);
   } else if (n < 0) {
-    fprintf(stderr, "Error: invalid value %ld:"
+    fprintf(stderr, "Error: invalid value %d:"
             "factorial can only be calculated for non-negative numbers\n", n);
     exit(1);
   }
 
-  int nn = (short) n;
-  long result = factorial(nn);
-  printf("factorial(%d) is %ld\n", nn, result);
+  long result = factorial(n);
+  printf("factorial(%d) is %ld\n", n, result);
 }
